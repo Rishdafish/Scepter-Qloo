@@ -4,9 +4,9 @@ from google.cloud import storage
 
 class Creator():
 
-    def __init__(self, email, password): 
+    def __init__(self, creator_id, email, password): 
 
-        self.CreatorId = str(uuid.uuid4())
+        self.CreatorId = creator_id
         self.email = email 
         self.password = password
         self.ShopCatalog = {}
@@ -46,7 +46,7 @@ class Creator():
     def save(self):
         """Saves the creator to GCS."""
         client = storage.Client()
-        bucket = client.bucket("data_for_website")
+        bucket = client.bucket("qloo_hackathon_scepter_bucket")
         blob = bucket.blob(f"creators/{self.CreatorId}.json")
         blob.upload_from_string(json.dumps(self.__dict__), content_type="application/json")
 

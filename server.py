@@ -10,23 +10,26 @@ from flask import (
     Flask, abort, flash, jsonify, redirect, render_template,
     request, session, url_for, current_app
 )
-from flask_login import login_user, login_required, logout_user, current_user
+from flask_login import login_user, login_required, logout_user, current_user, LoginManager
 from datetime import timedelta
 from werkzeug.security import check_password_hash, generate_password_hash
 from auth import User
-from google.cloud import storage
 from creator import Creator
+from google.cloud import storage
 from googleapiclient.discovery import build
+import uuid
+import requests
 
 app = Flask(__name__)
 app.secret_key = 'your-strong-random-secret'
 
-def upload_json(data, bucket_name, destination_blob_name):
-    storage_client = storage.Client()
-    bucket = storage_client.bucket(bucket_name)
-    blob = bucket.blob(destination_blob_name)
-    blob.upload_from_string(json.dumps(data), content_type="application/json")
-    return blob.public_url
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(user_id)
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -36,18 +39,7 @@ def MainPage():
 @app.route("/dashboard", methods=["GET", "POST"])
 @login_required
 def dashboard(): 
-    user = User.get(current_user.id)
-    if user is None:
-        flash("User not found")
-        return redirect(url_for('login'))
-    
-    if user.isFirstLogin:
-        user.isFirstLogin = False
-        user.save()
-
-        return redirect(url_for('firstLogin'), user=user)
-    
-    return render_template("dashboard.html", user=user)
+    return render_template("dashboard.html")
 
 @app.route("/login", methods=["GET", "POST"])
 def login(): 
@@ -56,10 +48,6 @@ def login():
     
     formEmail = request.form.get('email')
     formPassword = request.form.get('password')
-
-    if not formEmail or not formPassword:
-        flash("Please fill in all fields")
-        return redirect(url_for('login'))
     
     user = User.get(formEmail)
     if user and check_password_hash(user.Password, formPassword):
@@ -67,7 +55,7 @@ def login():
         return redirect(url_for('dashboard'))
     else:
         flash("Invalid email or password")
-        return redirect(url_for('login'))
+        return redirect(url_for('dashboard'))
 
 
 @app.route('/signup', methods=['POST', 'GET'])
@@ -75,38 +63,20 @@ def signup():
     if request.method == 'GET':
         return render_template('signup.html')
     
+    formName = request.form.get('name')
     formEmail = request.form.get('email')
     formPassword = request.form.get('password')
-    formConfirmPassword = request.form.get('confirm_password')
-
-    if formPassword != formConfirmPassword:
-        flash("Passwords do not match")
-        return redirect(url_for('signup'))
-
-    if not formEmail or not formPassword or not formConfirmPassword:
-        flash("Please fill in all fields")
-        return redirect(url_for('signup'))
     
-    if User.get(formEmail) is not None:
+    if User.get(formEmail) is not None: #meaning there is already a user with this email
         flash("Email already exists")
         return redirect(url_for('signup'))
 
-    user_data = {
-        "email": formEmail,
-        "PasswordHash": generate_password_hash(formPassword)
-    }
-    
+    user = User(formEmail, formPassword)
     try:
-        upload_json(
-            data=user_data,
-            bucket_name='data_for_website',
-            destination_blob_name=f'creators/{formEmail.lower().strip()}.json'
-        )
-
+        user.save()
         flash("Account created! You can now log in.", "success")
-        creator = Creator(formEmail, formPassword)
-        creator.save()
-        return redirect(url_for('login'))
+        login_user(user, remember=True, duration=timedelta(days=365))
+        return redirect(url_for('dashboard'))
     except Exception as e:
         current_app.logger.error(f"Failed to upload user blob: {e}")
         flash("Oops, something went wrong. Please try again.", "danger")
@@ -265,4 +235,4 @@ def get_twitch_user_info(access_token):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)
