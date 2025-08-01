@@ -3,3 +3,5 @@ ScepterVenv/
 
 # ignore dotenv files
 .env
+
+settings.json
