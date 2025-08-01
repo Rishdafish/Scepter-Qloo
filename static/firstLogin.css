@@ -1,0 +1,38 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.auth-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.auth-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px;
+    width: 300px;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.auth-button i {
+    font-size: 20px;
+}
+
+.auth-button.youtube { background: #FF0000; }
+.auth-button.twitch { background: #9146FF; }
+.auth-button.threads { background: #000000; }
+
+.auth-button:hover { opacity: 0.9; }
