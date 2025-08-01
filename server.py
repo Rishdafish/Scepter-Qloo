@@ -15,10 +15,13 @@ from datetime import timedelta
 from werkzeug.security import check_password_hash, generate_password_hash
 from auth import User
 from creator import Creator
+from dotenv import load_dotenv
 from google.cloud import storage
 from googleapiclient.discovery import build
 import uuid
 import requests
+
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = 'your-strong-random-secret'
@@ -26,6 +29,7 @@ app.secret_key = 'your-strong-random-secret'
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
+app.config['PREFERRED_URL_SCHEME'] = 'https'
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -80,12 +84,12 @@ def signup():
         flash("Email already exists")
         return redirect(url_for('signup'))
 
-    user = User(formEmail, formPassword)
+    user = User(formEmail, formPassword, isFirstLogin=True)
     try:
         user.save()
         flash("Account created! You can now log in.", "success")
         login_user(user, remember=True, duration=timedelta(days=365))
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('firstLogin'))
     except Exception as e:
         current_app.logger.error(f"Failed to upload user blob: {e}")
         flash("Oops, something went wrong. Please try again.", "danger")
@@ -186,7 +190,9 @@ def fetch_youtube_data():
 @login_required
 def connect_twitch():
     client_id = os.environ["TWITCH_CLIENT_ID"]
-    redirect_uri = url_for("twitch_callback", _external=True)
+    #redirect_uri = url_for("twitch_callback", _external=True)
+    redirect_uri = "https://17d5a74b694f.ngrok-free.app/twitch/callback"
+    print("redirect_uri: ", redirect_uri)
     scopes = "user:read:email channel:read:subscriptions"
     auth_url = (
         f"https://id.twitch.tv/oauth2/authorize"
@@ -196,21 +202,26 @@ def connect_twitch():
         f"&scope={scopes}"
         f"&state=xyz123"
     )
+    print("auth_url: ", auth_url)
     return redirect(auth_url)
 
 @app.route("/twitch/callback")
 @login_required
 def twitch_callback():
+    print("getting twitch callback")
     code = request.args.get("code")
     if not code:
+        print("no code")
         flash("Twitch authorization failed.")
         return redirect(url_for("firstLogin"))
 
+    print("code: ", code)
     client_id = os.environ["TWITCH_CLIENT_ID"]
     client_secret = os.environ["TWITCH_CLIENT_SECRET"]
     redirect_uri = url_for("twitch_callback", _external=True)
 
     token_url = "https://id.twitch.tv/oauth2/token"
+    print("token_url: ", token_url)
     payload = {
         "client_id": client_id,
         "client_secret": client_secret,
@@ -218,16 +229,21 @@ def twitch_callback():
         "grant_type": "authorization_code",
         "redirect_uri": redirect_uri
     }
-
+    print("payload: ", payload)
     res = requests.post(token_url, data=payload)
     data = res.json()
 
     access_token = data["access_token"]
     refresh_token = data["refresh_token"]
+    print("access_token: ", access_token)
 
-    save_twitch_token(current_user.id, access_token, refresh_token)
+    print("refresh_token: ", refresh_token)
+
+    print("I'm here")
+    # save_twitch_token(current_user.id, access_token, refresh_token)
 
     flash("Twitch connected!")
+    print("Twitch connected!")
     return redirect(url_for("firstLogin"))
 
 def refresh_twitch_token(refresh_token):
@@ -249,6 +265,13 @@ def get_twitch_user_info(access_token):
     }
     res = requests.get("https://api.twitch.tv/helix/users", headers=headers)
     return res.json()
+
+@app.route('/connectThreads', methods=["GET", "POST"])
+@login_required
+def connectThreads():
+    print("connectThreads")
+    return ""
+
 
 
 if __name__ == "__main__":

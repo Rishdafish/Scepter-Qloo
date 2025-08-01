@@ -10,6 +10,7 @@ class User(UserMixin):
         self.id = email.lower().strip()
         self.Password = password
         self.isFirstLogin = isFirstLogin
+        
 
     @classmethod
     def get(cls, email: str) -> typing.Optional["User"]:
