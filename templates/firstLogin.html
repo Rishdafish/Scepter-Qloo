@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Connect Accounts</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='firstLogin.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-+0s0JgtE1UnIFmLKaRGjn3hw5sxI7O4rdvXXDuMLGkjStHeI5GdYecsBC4VYmgJ2OU5GQvPp1Oph+cJn51p9eg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <div class="auth-container">
+        <a class="auth-button youtube" href="{{ url_for('connectYoutube') }}">
+            <i class="fa-brands fa-youtube"></i>
+            Continue with YouTube
+        </a>
+        <a class="auth-button twitch" href="{{ url_for('connect_twitch') }}">
+            <i class="fa-brands fa-twitch"></i>
+            Continue with Twitch
+        </a>
+        <a class="auth-button threads" href="{{ url_for('connectThreads') }}">
+            <i class="fa-brands fa-threads"></i>
+            Continue with Threads
+        </a>
+    </div>
+</body>
+</html>
