@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scepter Qloo</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f0f2f5;
+            color: #333;
+        }
+        header {
+            background: #4a148c;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        nav a {
+            color: #fff;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .hero {
+            padding: 80px 20px;
+            text-align: center;
+        }
+        .hero h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        .hero p {
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        .feature {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 10px;
+            padding: 20px;
+            flex: 0 1 300px;
+        }
+        .feature h3 {
+            margin-top: 0;
+            color: #4a148c;
+        }
+        footer {
+            background: #222;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+        .cta {
+            background: #4a148c;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        .cta:hover {
+            background: #6a1b9a;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/login">Login</a>
+            <a href="/signup">Sign Up</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>Welcome to Scepter Qloo</h1>
+        <p>Your gateway to intelligent prompts and seamless authentication.</p>
+        <a href="/signup"><button class="cta">Get Started</button></a>
+    </section>
+
+    <section class="features">
+        <div class="feature">
+            <h3>Smart Creation</h3>
+            <p>Create, save, and manage prompts with ease.</p>
+        </div>
+        <div class="feature">
+            <h3>User Dashboard</h3>
+            <p>Track your activity and manage your profile in one place.</p>
+        </div>
+        <div class="feature">
+            <h3>Secure Access</h3>
+            <p>State-of-the-art authentication keeps your data safe.</p>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Scepter Qloo. All rights reserved.</p>
+    </footer>
+</body>
+</html>
