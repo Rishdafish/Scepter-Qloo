@@ -238,7 +238,6 @@ def twitch_callback():
     access_token = data["access_token"]
     refresh_token = data["refresh_token"]
 
-    # ✅ Save these securely tied to the current user
     save_twitch_token(current_user.id, access_token, refresh_token)
 
     flash("Twitch connected!")
