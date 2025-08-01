@@ -41,6 +41,11 @@ def MainPage():
 def dashboard(): 
     return render_template("dashboard.html")
 
+@app.route('/firstLogin', methods=["GET", "POST"])
+@login_required
+def firstLogin():
+    return render_template("firstLogin.html")
+
 @app.route("/login", methods=["GET", "POST"])
 def login(): 
     if request.method == "GET":
@@ -52,10 +57,14 @@ def login():
     user = User.get(formEmail)
     if user and check_password_hash(user.Password, formPassword):
         login_user(user, remember=True, duration=timedelta(days=365))
-        return redirect(url_for('dashboard'))
+        if user.isFirstLogin:
+            user.isFirstLogin = False
+            return redirect(url_for('firstLogin'))
+        else:
+            return redirect(url_for('dashboard'))
     else:
         flash("Invalid email or password")
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('login'))
 
 
 @app.route('/signup', methods=['POST', 'GET'])
@@ -112,9 +121,17 @@ def oauth2callback():
         ],
         redirect_uri=url_for('oauth2callback', _external=True)
     )
+
     flow.fetch_token(authorization_response=request.url)
     credentials = flow.credentials
     session['youtube_token'] = credentials.to_json()
+    try: 
+        fetch_youtube_data()
+        current_user.isFirstLogin = False
+        current_user.save()
+    except Exception as e:
+        current_app.logger.error(f"Failed to fetch youtube data: {e}")
+        flash("Oops, something went wrong. Please try again.", "danger")
     return redirect(url_for('dashboard'))
 
 @app.route('/fetch_youtube_data')
@@ -187,7 +204,7 @@ def twitch_callback():
     code = request.args.get("code")
     if not code:
         flash("Twitch authorization failed.")
-        return redirect(url_for("dashboard"))
+        return redirect(url_for("firstLogin"))
 
     client_id = os.environ["TWITCH_CLIENT_ID"]
     client_secret = os.environ["TWITCH_CLIENT_SECRET"]
@@ -211,7 +228,7 @@ def twitch_callback():
     save_twitch_token(current_user.id, access_token, refresh_token)
 
     flash("Twitch connected!")
-    return redirect(url_for("dashboard"))
+    return redirect(url_for("firstLogin"))
 
 def refresh_twitch_token(refresh_token):
     payload = {
