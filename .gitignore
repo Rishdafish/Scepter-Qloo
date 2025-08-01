@@ -1,1 +1,5 @@
-./ScepterVenv
+# ignore Python virtualenv
+ScepterVenv/
+
+# ignore dotenv files
+.env
