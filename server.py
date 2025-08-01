@@ -105,9 +105,10 @@ def connectYoutube():
             "https://www.googleapis.com/auth/youtube.readonly",
             "openid", "email"
         ],
-        redirect_uri=url_for('oauth2callback', _external=True)
+        redirect_uri="https://17d5a74b694f.ngrok-free.app/oauth2callback"
     )
     auth_url, _ = flow.authorization_url(prompt='consent')
+    print("auth_url: ", auth_url)
     return redirect(auth_url)
 
 @app.route("/oauth2callback")
@@ -123,7 +124,7 @@ def oauth2callback():
             "https://www.googleapis.com/auth/youtube.readonly",
             "openid", "email"
         ],
-        redirect_uri=url_for('oauth2callback', _external=True)
+        redirect_uri="https://17d5a74b694f.ngrok-free.app/oauth2callback"
     )
 
     flow.fetch_token(authorization_response=request.url)
