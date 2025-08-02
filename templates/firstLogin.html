@@ -7,19 +7,39 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-+0s0JgtE1UnIFmLKaRGjn3hw5sxI7O4rdvXXDuMLGkjStHeI5GdYecsBC4VYmgJ2OU5GQvPp1Oph+cJn51p9eg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-    <div class="auth-container">
-        <a class="auth-button youtube" href="{{ url_for('connectYoutube') }}">
-            <i class="fa-brands fa-youtube"></i>
-            Continue with YouTube
-        </a>
-        <a class="auth-button twitch" href="{{ url_for('connect_twitch') }}">
-            <i class="fa-brands fa-twitch"></i>
-            Continue with Twitch
-        </a>
-        <a class="auth-button threads" href="{{ url_for('connectThreads') }}">
-            <i class="fa-brands fa-threads"></i>
-            Continue with Threads
-        </a>
+    <div class="auth-wrapper">
+        <h1>Connect Your Social Media Accounts</h1>
+        <p class="description">Log in with your preferred social media accounts to get started.</p>
+
+        <div class="auth-container">
+            <a class="auth-button youtube{% if session.get('youtube_token') %} connected{% endif %}" href="{{ url_for('connectYoutube') }}">
+                <i class="fa-brands fa-youtube"></i>
+                {% if session.get('youtube_token') %}
+                    YouTube Connected <i class="fa-solid fa-check check"></i>
+                {% else %}
+                    Continue with YouTube
+                {% endif %}
+            </a>
+            <a class="auth-button twitch{% if session.get('twitch_token') %} connected{% endif %}" href="{{ url_for('connect_twitch') }}">
+                <i class="fa-brands fa-twitch"></i>
+                {% if session.get('twitch_token') %}
+                    Twitch Connected <i class="fa-solid fa-check check"></i>
+                {% else %}
+                    Continue with Twitch
+                {% endif %}
+            </a>
+            <a class="auth-button threads{% if session.get('threads_token') %} connected{% endif %}" href="{{ url_for('connectThreads') }}">
+                <i class="fa-brands fa-threads"></i>
+                {% if session.get('threads_token') %}
+                    Threads Connected <i class="fa-solid fa-check check"></i>
+                {% else %}
+                    Continue with Threads
+                {% endif %}
+            </a>
+        </div>
+
+        <a class="next-button" href="{{ url_for('static', filename='secondlogin.html') }}">Next</a>
+        <p class="skip-link"><a href="{{ url_for('static', filename='secondlogin.html') }}">Continue without social media account</a></p>
     </div>
 </body>
 </html>
