@@ -34,8 +34,9 @@ body {
     transition: background 0.3s ease;
 }
 
-.auth-button i {
-    font-size: 20px;
+.auth-button .social-logo {
+    height: 20px;
+    width: 20px;
 }
 
 .auth-button.youtube { background: #FF0000; }
@@ -45,6 +46,7 @@ body {
 .auth-button.connected { background: #28a745; }
 .auth-button .check {
     margin-left: 8px;
+    font-size: 20px;
 }
 
 .auth-button:hover { opacity: 0.9; }

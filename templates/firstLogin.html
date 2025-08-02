@@ -13,6 +13,7 @@
 
         <div class="auth-container">
             <a class="auth-button youtube{% if session.get('youtube_token') %} connected{% endif %}" href="{{ url_for('connectYoutube') }}">
+                <img src="{{ url_for('static', filename='images/youtube.png') }}" alt="YouTube logo" class="social-logo">
                 <i class="fa-brands fa-youtube"></i>
                 {% if session.get('youtube_token') %}
                     YouTube Connected <i class="fa-solid fa-check check"></i>
@@ -21,6 +22,7 @@
                 {% endif %}
             </a>
             <a class="auth-button twitch{% if session.get('twitch_token') %} connected{% endif %}" href="{{ url_for('connect_twitch') }}">
+                <img src="{{ url_for('static', filename='images/twitch.png') }}" alt="Twitch logo" class="social-logo">
                 <i class="fa-brands fa-twitch"></i>
                 {% if session.get('twitch_token') %}
                     Twitch Connected <i class="fa-solid fa-check check"></i>
@@ -29,6 +31,8 @@
                 {% endif %}
             </a>
             <a class="auth-button threads{% if session.get('threads_token') %} connected{% endif %}" href="{{ url_for('connectThreads') }}">
+
+                <img src="{{ url_for('static', filename='images/threads.png') }}" alt="Threads logo" class="social-logo">
                 <i class="fa-brands fa-threads"></i>
                 {% if session.get('threads_token') %}
                     Threads Connected <i class="fa-solid fa-check check"></i>

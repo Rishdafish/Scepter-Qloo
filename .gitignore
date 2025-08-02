@@ -6,3 +6,7 @@ ScepterVenv/
 
 settings.json
 client_secret.json
+
+# ignore Python bytecode
+__pycache__/
+*.pyc
